@@ -19,8 +19,9 @@ Route::prefix('auth')->group(function () {
 
 
 
-Route::middleware('auth:api')->group(function () {
-    Route::post('orders', [OrderController::class, 'store']);
+Route::middleware(['auth:api', 'role:client'])->group(function () {
+    Route::post('/orders', [OrderController::class, 'store']);
+    Route::get('/orders', [OrderController::class, 'index']);
 });
 
 
@@ -44,5 +45,5 @@ Route::get('categories', [CategoryController::class, 'index']);
 Route::middleware(['auth:api', 'role:admin'])->group(function () {
     Route::post('categories',             [CategoryController::class, 'store']);
     Route::put('categories/{category}',   [CategoryController::class, 'update']);
-    Route::delete('categories/{category}',[CategoryController::class, 'destroy']);
+    Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
 });
