@@ -22,6 +22,9 @@ Route::prefix('auth')->group(function () {
 Route::middleware(['auth:api', 'role:client'])->group(function () {
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('orders/{id}',          [OrderController::class, 'show']);
+    Route::patch('orders/{id}/cancel', [OrderController::class, 'cancel']);
+    Route::get('mes-commandes', [OrderController::class, 'mesCommandes']);
 });
 
 
