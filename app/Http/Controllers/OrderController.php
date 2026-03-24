@@ -11,11 +11,13 @@ class OrderController extends Controller
 {
     public function store(Request $request)
     {
+
         $request->validate([
             'items'              => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity'   => 'required|integer|min:1',
         ]);
+
 
         $total = 0;
         $items = [];
@@ -30,13 +32,16 @@ class OrderController extends Controller
             ];
         }
 
+
         $order = Order::create([
             'user_id' => auth()->id(),
-            'status'  => 'en_attente',
+            'status'  => 'pending',
             'total'   => $total,
         ]);
 
+
         $order->items()->createMany($items);
+
 
         return response()->json([
             'message' => 'Commande créée avec succès',
@@ -58,13 +63,13 @@ class OrderController extends Controller
         $order = Order::where('user_id', auth()->id())
             ->findOrFail($id);
 
-        if ($order->status !== 'en_attente') {
+        if ($order->status !== 'pending') {
             return response()->json([
                 'message' => 'Impossible d\'annuler cette commande.',
             ], 422);
         }
 
-        $order->update(['status' => 'annulee']);
+        $order->update(['status' => 'cancelled']);
 
         return response()->json([
             'message' => 'Commande annulée',
@@ -102,5 +107,23 @@ class OrderController extends Controller
             });
 
         return response()->json($orders);
+    }
+
+    public function prepare(int $id)
+    {
+        $order = Order::findOrFail($id);
+
+        if ($order->status !== 'pending') {
+            return response()->json([
+                'message' => 'Cette commande ne peut pas être mise en préparation.',
+            ], 422);
+        }
+
+        $order->update(['status' => 'preparing']);
+
+        return response()->json([
+            'message' => 'Commande en préparation',
+            'order'   => $order,
+        ]);
     }
 }

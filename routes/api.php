@@ -50,3 +50,8 @@ Route::middleware(['auth:api', 'role:admin'])->group(function () {
     Route::put('categories/{category}',   [CategoryController::class, 'update']);
     Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
 });
+
+
+Route::middleware(['auth:api', 'role:employee|admin'])->group(function () {
+    Route::post('orders/{id}/prepare', [OrderController::class, 'prepare']);
+});
