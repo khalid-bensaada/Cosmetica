@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\StatController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -54,4 +55,8 @@ Route::middleware(['auth:api', 'role:admin'])->group(function () {
 
 Route::middleware(['auth:api', 'role:employee|admin'])->group(function () {
     Route::post('orders/{id}/prepare', [OrderController::class, 'prepare']);
+});
+
+Route::middleware(['auth:api', 'role:admin'])->group(function () {
+    Route::get('admin/dashboard', [StatController::class, 'dashboard']);
 });
